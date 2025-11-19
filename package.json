@@ -1,0 +1,21 @@
+{
+  "name": "line-code",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "fetch": "node ./scripts/fetchDocuments.js",
+    "start": "npx serve ./public"
+  },
+  "keywords": [
+    "kaa",
+    "line",
+    "law"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "Law-list viewer for the Kaohsiung Architects Association",
+  "dependencies": {
+    "cheerio": "^1.1.2"
+  }
+}
