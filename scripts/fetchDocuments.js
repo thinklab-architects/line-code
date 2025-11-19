@@ -5,8 +5,8 @@ import { load } from 'cheerio';
 
 const BASE_URL = 'https://www.kaa.org.tw';
 const LIST_URL = `${BASE_URL}/law_list.php`;
-const MAX_RECORDS = 25;
-const DETAIL_DELAY_MS = 250;
+const DETAIL_DELAY_MS = 200;
+const DETAIL_CONCURRENCY = 3;
 
 const DEFAULT_HEADERS = {
   'User-Agent':
@@ -41,7 +41,21 @@ function normalizeLabel(value) {
 
 function absoluteUrl(value) {
   if (!value) return null;
-  return new URL(value, LIST_URL).href;
+  try {
+    return new URL(value, LIST_URL).href;
+  } catch {
+    return null;
+  }
+}
+
+function buildListUrl(pageNumber = 1) {
+  if (!pageNumber || pageNumber === 1) {
+    return LIST_URL;
+  }
+
+  const url = new URL(LIST_URL);
+  url.searchParams.set('b', String(pageNumber));
+  return url.toString();
 }
 
 function parseRepublicYear(value) {
@@ -71,6 +85,18 @@ function parseDateValue(value) {
   }
 
   return `${gregorianYear}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+function parsePagination($) {
+  const summary = cleanText($('.quantity .q_box2').text());
+  const totalMatch = summary.match(/資料筆數：(\d+)/);
+  const pageMatch = summary.match(/頁數：(\d+)\/(\d+)/);
+
+  return {
+    totalRecords: totalMatch ? Number(totalMatch[1]) : null,
+    currentPage: pageMatch ? Number(pageMatch[1]) : 1,
+    totalPages: pageMatch ? Number(pageMatch[2]) : 1,
+  };
 }
 
 function parseList(html) {
@@ -112,7 +138,10 @@ function parseList(html) {
       });
     });
 
-  return documents.slice(0, MAX_RECORDS);
+  return {
+    documents,
+    pagination: parsePagination($),
+  };
 }
 
 function parseDetail(html) {
@@ -204,34 +233,85 @@ function parseDetail(html) {
   return record;
 }
 
-async function fetchDocuments() {
-  const html = await fetchPage(LIST_URL);
-  const list = parseList(html);
+async function fetchAllListPages() {
   const documents = [];
+  let totalPages = 1;
 
-  for (const entry of list) {
-    let detail = {
-      attachments: [],
-      relatedLinks: [],
-    };
+  for (let page = 1; page <= totalPages; page += 1) {
+    const url = buildListUrl(page);
+    const html = await fetchPage(url);
+    const { documents: entries, pagination } = parseList(html);
 
-    if (entry.subjectUrl) {
-      try {
-        const detailHtml = await fetchPage(entry.subjectUrl);
-        detail = parseDetail(detailHtml);
-        await sleep(DETAIL_DELAY_MS);
-      } catch (error) {
-        console.warn(`Unable to parse detail page ${entry.subjectUrl}:`, error.message);
-      }
+    if (page === 1 && pagination.totalRecords) {
+      console.log(
+        `Listing summary: ${pagination.totalRecords} records across ${pagination.totalPages} pages.`,
+      );
     }
 
-    documents.push({
-      ...entry,
-      ...detail,
-    });
+    totalPages = pagination.totalPages ?? totalPages;
+    documents.push(...entries);
+    console.log(`Parsed page ${page}/${totalPages} (${entries.length} records)`);
   }
 
   return documents;
+}
+
+async function enrichWithDetails(documents) {
+  const results = new Array(documents.length);
+  let nextIndex = 0;
+
+  const worker = async () => {
+    while (true) {
+      const currentIndex = nextIndex;
+      nextIndex += 1;
+
+      if (currentIndex >= documents.length) {
+        break;
+      }
+
+      const entry = documents[currentIndex];
+      let detail = {
+        attachments: [],
+        relatedLinks: [],
+      };
+
+      if (entry.subjectUrl) {
+        try {
+          const detailHtml = await fetchPage(entry.subjectUrl);
+          detail = parseDetail(detailHtml);
+        } catch (error) {
+          console.warn(`Unable to parse detail page ${entry.subjectUrl}:`, error.message);
+        }
+      }
+
+      results[currentIndex] = {
+        ...entry,
+        ...detail,
+      };
+
+      if ((currentIndex + 1) % 100 === 0) {
+        console.log(`Processed ${currentIndex + 1}/${documents.length} detail pages`);
+      }
+
+      if (DETAIL_DELAY_MS > 0) {
+        await sleep(DETAIL_DELAY_MS);
+      }
+    }
+  };
+
+  const workers = Array.from(
+    { length: Math.min(DETAIL_CONCURRENCY, documents.length) },
+    () => worker(),
+  );
+
+  await Promise.all(workers);
+  return results;
+}
+
+async function fetchDocuments() {
+  const documents = await fetchAllListPages();
+  console.log(`Collected ${documents.length} list entries, fetching detail pages...`);
+  return enrichWithDetails(documents);
 }
 
 async function writeData(documents) {
