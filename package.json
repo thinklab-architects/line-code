@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "fetch": "node ./scripts/fetchDocuments.js",
-    "start": "npx serve ./public"
+    "start": "npx serve ./docs"
   },
   "keywords": [
     "kaa",

@@ -235,7 +235,7 @@ async function fetchDocuments() {
 }
 
 async function writeData(documents) {
-  const outDir = path.resolve(__dirname, '../public/data');
+  const outDir = path.resolve(__dirname, '../docs/data');
   await fs.mkdir(outDir, { recursive: true });
   const outPath = path.join(outDir, 'documents.json');
   await fs.writeFile(

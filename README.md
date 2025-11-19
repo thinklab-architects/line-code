@@ -1,31 +1,31 @@
 # line-code 法規紀錄
 
-這個專案會擷取高雄市建築師公會官網「法規訊息」頁面，整理成單頁應用程式，方便部署到 GitHub Pages。
+這個專案會擷取高雄市建築師公會官網「法規訊息」，彙整成可掛在 GitHub Pages 上的單頁應用程式。
 
 ## 主要功能
 
-- 透過 
-pm run fetch 自動下載最新法規清單，並且解析各條文的附件與相關網址
-- 支援快速搜尋條文主旨、發文字號、發文單位與附件檔名
-- 依發文時間自動分成「最新 / 近期 / 較早」三種狀態，並提供排序選項
-- 響應式版面，可直接部署到 GitHub Pages
+- `npm run fetch` 會下載法規列表並解析每一條的附件、相關網址與條文內容
+- 介面支援搜尋主旨、字號、發文單位、附件檔名與條文內容
+- 依發文時間自動分類為「最新 / 近期 / 較早 / 未備日期」，並提供多種排序方式
+- 響應式 UI，可直接部署在 GitHub Pages（使用 `docs/` 為根目錄）
 
 ## 使用方式
 
-1. 安裝相依套件：
-   `ash
+1. 安裝相依套件
+   ```bash
    npm install
-   `
-2. 擷取最新資料：
-   `ash
+   ```
+2. 擷取最新資料（結果會寫入 `docs/data/documents.json`，前端載入即更新）
+   ```bash
    npm run fetch
-   `
-   產出的 public/data/documents.json 會被前端直接載入。
-3. 本地預覽：
-   `ash
-   npx serve public
-   `
-4. 發布到 GitHub Pages 時，可將 public 目錄指定為 Pages 的根目錄。
+   ```
+3. 本地預覽
+   ```bash
+   npx serve docs
+   ```
+4. GitHub Pages 設定
+   - Build and deployment > Source：`Deploy from a branch`
+   - Branch：`master`（或你使用的主分支）
+   - Folder：`/docs`
 
-> 若要自動更新資料，可設定排程（例如 GitHub Actions）定期執行 
-pm run fetch 後重新部署。
+> 若要自動更新資料，可建立 GitHub Actions Workflow 定期執行 `npm run fetch` 再觸發 Pages 重新部署。
