@@ -10,6 +10,8 @@ const BADGE_TEXT = {
 };
 
 const DEFAULT_STATUS_VALUES = ['due-soon', 'active', 'no-deadline'];
+const PRIORITY_ISSUERS = ['內政部國土管理署', '內政部'];
+const PRIORITY_ISSUERS = ['內政部國土管理署', '內政部'];
 
 const state = {
   documents: [],
@@ -25,6 +27,14 @@ const serialCollator = new Intl.Collator('zh-Hant', {
   numeric: true,
   sensitivity: 'base',
 });
+
+function isPriorityIssuer(issuer) {
+  if (!issuer) {
+    return false;
+  }
+
+  return PRIORITY_ISSUERS.some((value) => issuer.includes(value));
+}
 
 bootstrapLayout();
 
@@ -513,8 +523,16 @@ function createRelatedLinkList(doc) {
 }
 
 function createDocumentCard(doc) {
+  const priorityIssuerLabel = isPriorityIssuer(doc.issuer)
+    ? PRIORITY_ISSUERS.find((value) => doc.issuer?.includes(value))
+    : null;
+
   const card = document.createElement('article');
-  card.className = `document-card document-card--${doc.deadlineCategory}`;
+  const classNames = ['document-card', `document-card--${doc.deadlineCategory}`];
+  if (priorityIssuerLabel) {
+    classNames.push('document-card--priority');
+  }
+  card.className = classNames.join(' ');
 
   const header = document.createElement('header');
   header.className = 'document-card__header';
@@ -523,6 +541,13 @@ function createDocumentCard(doc) {
   badge.className = `badge badge--${doc.deadlineCategory}`;
   badge.textContent = BADGE_TEXT[doc.deadlineCategory] ?? '狀態不明';
   header.appendChild(badge);
+
+  if (priorityIssuerLabel) {
+    const priorityFlag = document.createElement('span');
+    priorityFlag.className = 'document-card__flag';
+    priorityFlag.textContent = `${priorityIssuerLabel}｜重要`;
+    header.appendChild(priorityFlag);
+  }
 
   if (doc.date) {
     const issued = document.createElement('span');
