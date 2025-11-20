@@ -11,7 +11,6 @@ const BADGE_TEXT = {
 
 const DEFAULT_STATUS_VALUES = ['due-soon', 'active', 'no-deadline'];
 const PRIORITY_ISSUERS = ['內政部國土管理署', '內政部'];
-const PRIORITY_ISSUERS = ['內政部國土管理署', '內政部'];
 
 const state = {
   documents: [],
