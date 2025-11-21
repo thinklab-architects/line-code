@@ -241,6 +241,27 @@ function parseDetail(html) {
   return record;
 }
 
+async function loadExistingData() {
+  try {
+    const existingPath = path.resolve(__dirname, '../docs/data/documents.json');
+    const raw = await fs.readFile(existingPath, 'utf8');
+    const parsed = JSON.parse(raw);
+    return {
+      documents: parsed.documents ?? [],
+      totalRecords: parsed.totalRecords ?? parsed.total ?? parsed.documents?.length ?? null,
+    };
+  } catch {
+    return { documents: [], totalRecords: null };
+  }
+}
+
+function makeKey(doc) {
+  return (
+    doc.subjectUrl ||
+    `${doc.articleNumber ?? ''}|${doc.documentNumber ?? ''}|${doc.date ?? ''}|${doc.subject ?? ''}`.trim()
+  );
+}
+
 async function fetchAllListPages() {
   const documents = [];
   let totalPages = 1;
@@ -337,13 +358,42 @@ async function enrichWithDetails(documents) {
 }
 
 async function fetchDocuments() {
-  const { documents, totalRecords } = await fetchAllListPages();
-  console.log(`Collected ${documents.length} list entries, fetching detail pages...`);
-  const enriched = await enrichWithDetails(documents);
+  const existing = await loadExistingData();
+  const existingMap = new Map();
+  existing.documents.forEach((doc) => existingMap.set(makeKey(doc), doc));
+
+  const { documents: listDocs, totalRecords } = await fetchAllListPages();
+
+  const toEnrich = [];
+  listDocs.forEach((doc) => {
+    const key = makeKey(doc);
+    const prev = existingMap.get(key);
+    if (prev) {
+      existingMap.set(key, { ...prev, ...doc });
+    } else {
+      existingMap.set(key, doc);
+      toEnrich.push(doc);
+    }
+  });
+
+  if (toEnrich.length) {
+    console.log(`Collected ${toEnrich.length} new/updated entries, fetching detail pages...`);
+    const enrichedNew = await enrichWithDetails(toEnrich);
+    enrichedNew.forEach((doc) => {
+      const key = makeKey(doc);
+      const prev = existingMap.get(key) ?? {};
+      existingMap.set(key, { ...prev, ...doc });
+    });
+  } else {
+    console.log('No new entries detected; reusing existing details.');
+  }
+
+  const mergedDocuments = Array.from(existingMap.values());
+  const mergedTotal = totalRecords ?? existing.totalRecords ?? mergedDocuments.length;
 
   return {
-    documents: enriched,
-    totalRecords,
+    documents: mergedDocuments,
+    totalRecords: mergedTotal,
   };
 }
 
