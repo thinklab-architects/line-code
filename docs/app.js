@@ -16,7 +16,7 @@ const REGION_FILTERS = {
   kaohsiung: '高雄',
   taipei: '臺北',
   newTaipei: '新北',
-  other: '其他',
+  other: '其他縣市',
 };
 const PRIORITY_ISSUERS = ['內政部國土管理署', '內政部'];
 
