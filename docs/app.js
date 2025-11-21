@@ -6,11 +6,10 @@ const BADGE_TEXT = {
   'due-soon': '最新',
   active: '近期',
   expired: '較早',
-  'no-deadline': '無日期',
 };
 
 const PAGE_CHUNK = 20;
-const DEFAULT_STATUS_VALUES = ['due-soon', 'active', 'expired', 'no-deadline'];
+const DEFAULT_STATUS_VALUES = ['due-soon', 'active', 'expired'];
 const PRIORITY_ISSUERS = ['內政部國土管理署', '內政部'];
 
 const state = {
@@ -328,7 +327,7 @@ function enrichDocument(doc) {
   const deadlineDate = parseDate(doc.deadline);
   const today = getTaipeiToday();
 
-  let deadlineCategory = 'no-deadline';
+  let deadlineCategory = 'expired';
   let daysUntilDeadline = null;
    let daysSinceIssued = null;
 
@@ -481,7 +480,7 @@ function applyFilters() {
 
   if (state.filters.statuses.size) {
     results = results.filter((doc) =>
-      state.filters.statuses.has(doc.deadlineCategory ?? 'no-deadline'),
+      state.filters.statuses.has(doc.deadlineCategory ?? 'expired'),
     );
   }
 
