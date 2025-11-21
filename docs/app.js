@@ -72,8 +72,6 @@ function detectRegion(issuer) {
   return 'other';
 }
 
-bootstrapLayout();
-
 const elements = {
   status: document.getElementById('status'),
   documentList: document.getElementById('documentList'),
@@ -239,104 +237,9 @@ elements.clearFilters.addEventListener('click', () => {
 loadDocuments();
 
 function bootstrapLayout() {
-  document.title = '高雄建築師公會法規紀錄';
-  const template = document.createElement('template');
-  template.innerHTML = `
-    <div class="top-bar shell">
-      <div class="top-bar__search">
-        <label class="sr-only" for="search">搜尋條文、機關或字號</label>
-        <input
-          id="search"
-          type="search"
-          placeholder="搜尋條文、機關或字號"
-          autocomplete="off"
-        />
-      </div>
-    </div>
-
-    <header class="hero">
-      <div class="shell hero__inner">
-        <div class="hero__lede">
-          <p class="hero__eyebrow"><span class="hero__eyebrow-abbr">KAA</span>法規專區</p>
-          <h1 class="hero__title">法規訊息紀錄</h1>
-          <p class="hero__description">
-            每日擷取高雄市建築師公會「法規訊息」，彙整附件、條文與相關連結，方便快速檢索。
-          </p>
-          <div class="hero__actions">
-            <a
-              class="hero__link"
-              href="https://www.kaa.org.tw/law_list.php"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              查看官方列表
-            </a>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <main class="shell flow">
-      <section class="controls" aria-label="篩選與排序">
-        <div class="field-group">
-          <label class="field-label" for="timeRange">顯示時間範圍</label>
-          <select id="timeRange">
-            <option value="3m">3 個月內</option>
-            <option value="1y">1 年內</option>
-            <option value="gt1y">1 年以上</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="regionFilter">發文單位</label>
-          <select id="regionFilter">
-            <option value="all">全部</option>
-            <option value="central">中央</option>
-            <option value="kaohsiung">高雄</option>
-            <option value="taipei">臺北</option>
-            <option value="newTaipei">新北</option>
-            <option value="other">其他縣市</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="sortSelect">排序方式</label>
-          <select id="sortSelect">
-            <option value="date-desc">最新發布在前</option>
-            <option value="date-asc">最早發布在前</option>
-            <option value="serial-desc">條文編號由大到小</option>
-            <option value="serial-asc">條文編號由小到大</option>
-          </select>
-        </div>
-
-        <button id="clearFilters" type="button">重設條件</button>
-      </section>
-
-      <section aria-live="polite">
-        <div id="status" class="status">資料載入中...</div>
-        <div id="documentList" class="document-grid" hidden></div>
-      </section>
-    </main>
-
-    <footer class="app-footer">
-      <div class="shell footer-inner">
-        <p class="footer-copy">
-          資料來源：
-          <a
-            href="https://www.kaa.org.tw/law_list.php"
-            target="_blank"
-            rel="noopener noreferrer"
-          >高雄市建築師公會・法規訊息</a>
-          ｜GitHub Pages 自動更新。
-        </p>
-        <p id="updatedAt" class="footer-updated" aria-live="polite">資料更新：尚未更新</p>
-      </div>
-    </footer>
-
-    <script type="module" src="./app.js"></script>
-  `;
-  document.body.replaceChildren(template.content.cloneNode(true));
+  // Use markup from docs/index.html; do not override DOM at runtime.
 }
+
 
 function formatUpdatedAt(isoString) {
   if (!isoString) return '資料更新：尚未更新';
