@@ -244,6 +244,7 @@ function parseDetail(html) {
 async function fetchAllListPages() {
   const documents = [];
   let totalPages = 1;
+  let totalRecords = null;
 
   for (let page = 1; page <= totalPages; page += 1) {
     if (page > MAX_LIST_PAGES) {
@@ -260,6 +261,10 @@ async function fetchAllListPages() {
       const parsed = parseList(html);
       entries = parsed.documents;
       pagination = parsed.pagination;
+
+      if (page === 1 && pagination.totalRecords) {
+        totalRecords = pagination.totalRecords;
+      }
     } catch (error) {
       console.warn(`Skip page ${page}: ${error.message}`);
       continue;
@@ -276,7 +281,7 @@ async function fetchAllListPages() {
     console.log(`Parsed page ${page}/${totalPages} (${entries.length} records)`);
   }
 
-  return documents;
+  return { documents, totalRecords };
 }
 
 async function enrichWithDetails(documents) {
@@ -332,18 +337,28 @@ async function enrichWithDetails(documents) {
 }
 
 async function fetchDocuments() {
-  const documents = await fetchAllListPages();
+  const { documents, totalRecords } = await fetchAllListPages();
   console.log(`Collected ${documents.length} list entries, fetching detail pages...`);
-  return enrichWithDetails(documents);
+  const enriched = await enrichWithDetails(documents);
+
+  return {
+    documents: enriched,
+    totalRecords,
+  };
 }
 
-async function writeData(documents) {
+async function writeData(payload) {
+  const { documents, totalRecords } = payload;
   const outDir = path.resolve(__dirname, '../docs/data');
   await fs.mkdir(outDir, { recursive: true });
   const outPath = path.join(outDir, 'documents.json');
   await fs.writeFile(
     outPath,
-    JSON.stringify({ documents, updatedAt: new Date().toISOString() }, null, 2),
+    JSON.stringify(
+      { documents, totalRecords: totalRecords ?? documents.length, updatedAt: new Date().toISOString() },
+      null,
+      2,
+    ),
     'utf8',
   );
   return outPath;
@@ -351,9 +366,11 @@ async function writeData(documents) {
 
 async function main() {
   try {
-    const documents = await fetchDocuments();
-    const outPath = await writeData(documents);
-    console.log(`Saved ${documents.length} law records to ${outPath}`);
+    const { documents, totalRecords } = await fetchDocuments();
+    const outPath = await writeData({ documents, totalRecords });
+    console.log(
+      `Saved ${documents.length} law records (reported total: ${totalRecords ?? documents.length}) to ${outPath}`,
+    );
   } catch (error) {
     console.error(error);
     process.exitCode = 1;

@@ -29,6 +29,7 @@ const state = {
     statuses: new Set(DEFAULT_STATUS_VALUES),
     region: 'all',
   },
+  totalRecords: null,
   pagination: {
     chunkSize: PAGE_CHUNK,
     visibleCount: PAGE_CHUNK,
@@ -537,6 +538,15 @@ function applyFilters() {
 }
 
 function updateStatus(filtered, total) {
+  const hasCustomFilters =
+    state.filters.search ||
+    state.filters.region !== 'all' ||
+    state.filters.statuses.size !== DEFAULT_STATUS_VALUES.length ||
+    state.filters.sort !== 'date-desc';
+
+  const displayTotal =
+    !hasCustomFilters && state.totalRecords ? state.totalRecords : filtered;
+
   elements.status.classList.remove('status--error');
 
   if (total === 0) {
@@ -549,7 +559,7 @@ function updateStatus(filtered, total) {
     return;
   }
 
-  elements.status.textContent = `共 ${filtered} 筆紀錄`;
+  elements.status.textContent = `共 ${displayTotal} 筆紀錄`;
 }
 
 function setDocumentListVisibility(hasResults) {
@@ -769,6 +779,7 @@ async function loadDocuments() {
     const documents = payload.documents ?? [];
 
     state.documents = documents.map(enrichDocument);
+    state.totalRecords = payload.totalRecords ?? documents.length;
     render();
 
     if (payload.updatedAt) {
