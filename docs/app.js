@@ -69,6 +69,43 @@ const REGION_RULES = [
   { region: 'newTaipei', keywords: ['新北'] },
 ];
 
+const CITY_OR_COUNTY_KEYWORDS = [
+  '臺北市',
+  '台北市',
+  '新北市',
+  '高雄市',
+  '臺中市',
+  '台中市',
+  '臺南市',
+  '台南市',
+  '基隆市',
+  '桃園市',
+  '新竹市',
+  '嘉義市',
+  '新竹縣',
+  '苗栗縣',
+  '彰化縣',
+  '南投縣',
+  '雲林縣',
+  '嘉義縣',
+  '屏東縣',
+  '宜蘭縣',
+  '花蓮縣',
+  '臺東縣',
+  '台東縣',
+  '澎湖縣',
+  '金門縣',
+  '連江縣',
+];
+
+function hasCityOrCounty(text) {
+  if (!text) {
+    return false;
+  }
+
+  return CITY_OR_COUNTY_KEYWORDS.some((keyword) => text.includes(keyword));
+}
+
 function detectRegion(issuer, subject) {
   const normalizedIssuer = issuer?.trim() ?? '';
   const normalizedSubject = subject?.trim() ?? '';
@@ -104,6 +141,13 @@ function detectRegion(issuer, subject) {
     if (subjectRegion) {
       return subjectRegion;
     }
+  }
+
+  if (
+    !hasCityOrCounty(normalizedIssuer) &&
+    !hasCityOrCounty(normalizedSubject)
+  ) {
+    return 'central';
   }
 
   return 'other';
