@@ -684,7 +684,7 @@ function createDocumentCard(doc) {
   if (priorityIssuerLabel) {
     const priorityFlag = document.createElement('span');
     priorityFlag.className = 'document-card__flag';
-    priorityFlag.textContent = `${priorityIssuerLabel}｜重要`;
+    priorityFlag.textContent = priorityIssuerLabel;
     header.appendChild(priorityFlag);
   }
 
@@ -779,7 +779,7 @@ function createSimpleDocumentCard(doc) {
   if (priorityIssuerLabel) {
     const priorityFlag = document.createElement('span');
     priorityFlag.className = 'document-card__flag';
-    priorityFlag.textContent = `${priorityIssuerLabel}｜重要`;
+    priorityFlag.textContent = priorityIssuerLabel;
     card.appendChild(priorityFlag);
   }
 
