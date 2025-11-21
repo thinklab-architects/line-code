@@ -118,6 +118,13 @@ function detectRegion(issuer, subject) {
     return 'kaohsiung';
   }
 
+  if (
+    normalizedIssuer.includes('科學園區管理局') ||
+    normalizedSubject.includes('科學園區管理局')
+  ) {
+    return 'central';
+  }
+
   const matchRegion = (text) => {
     if (!text) {
       return null;
