@@ -36,6 +36,9 @@ jobs:
 
       - name: Fetch latest documents
         run: npm run fetch
+        env:
+          FETCH_MAX_PAGES: 60
+          DETAIL_CONCURRENCY: 1
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

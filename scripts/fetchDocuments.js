@@ -6,7 +6,15 @@ import { load } from 'cheerio';
 const BASE_URL = 'https://www.kaa.org.tw';
 const LIST_URL = `${BASE_URL}/law_list.php`;
 const DETAIL_DELAY_MS = 200;
-const DETAIL_CONCURRENCY = 3;
+const DETAIL_CONCURRENCY = Math.max(
+  1,
+  Number.isFinite(Number(process.env.DETAIL_CONCURRENCY))
+    ? Number(process.env.DETAIL_CONCURRENCY)
+    : 2,
+);
+const MAX_LIST_PAGES = Number.isFinite(Number(process.env.FETCH_MAX_PAGES))
+  ? Number(process.env.FETCH_MAX_PAGES)
+  : Infinity;
 
 const DEFAULT_HEADERS = {
   'User-Agent':
@@ -238,6 +246,11 @@ async function fetchAllListPages() {
   let totalPages = 1;
 
   for (let page = 1; page <= totalPages; page += 1) {
+    if (page > MAX_LIST_PAGES) {
+      console.log(`Reached page cap (${MAX_LIST_PAGES}), stopping early.`);
+      break;
+    }
+
     const url = buildListUrl(page);
     let entries = [];
     let pagination = { totalPages };

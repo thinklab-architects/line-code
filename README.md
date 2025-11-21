@@ -19,6 +19,7 @@
    ```bash
    npm run fetch
    ```
+   - 若只想跑部分頁面，可透過環境變數 `FETCH_MAX_PAGES=60`、`DETAIL_CONCURRENCY=1` 控制，減少排程執行時間。
 3. 本地預覽
    ```bash
    npx serve docs
