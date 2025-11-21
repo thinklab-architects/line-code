@@ -278,25 +278,26 @@ function bootstrapLayout() {
 
     <main class="shell flow">
       <section class="controls" aria-label="篩選與排序">
-        <fieldset class="status-group">
-          <legend class="field-label">顯示時間範圍</legend>
-          <label class="status-option">
-            <input type="checkbox" name="statusFilter" value="due-soon" checked />
-            <span>最新（14 天內）</span>
-          </label>
-          <label class="status-option">
-            <input type="checkbox" name="statusFilter" value="active" checked />
-            <span>近期（三個月內）</span>
-          </label>
-          <label class="status-option">
-            <input type="checkbox" name="statusFilter" value="expired" />
-            <span>較早</span>
-          </label>
-          <label class="status-option">
-            <input type="checkbox" name="statusFilter" value="no-deadline" checked />
-            <span>未備日期</span>
-          </label>
-        </fieldset>
+        <div class="field-group">
+          <label class="field-label" for="timeRange">顯示時間範圍</label>
+          <select id="timeRange">
+            <option value="3m">3 個月內</option>
+            <option value="1y">1 年內</option>
+            <option value="gt1y">1 年以上</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="regionFilter">發文單位</label>
+          <select id="regionFilter">
+            <option value="all">全部</option>
+            <option value="central">中央</option>
+            <option value="kaohsiung">高雄</option>
+            <option value="taipei">臺北</option>
+            <option value="newTaipei">新北</option>
+            <option value="other">其他縣市</option>
+          </select>
+        </div>
 
         <div class="field-group">
           <label class="field-label" for="sortSelect">排序方式</label>
@@ -819,6 +820,9 @@ async function loadDocuments() {
     }
     if (elements.regionSelect) {
       elements.regionSelect.value = state.filters.region;
+    }
+    if (elements.timeRange) {
+      elements.timeRange.value = state.filters.timeRange;
     }
 
     setDocumentListVisibility(state.filtered.length > 0);
