@@ -132,6 +132,13 @@ function detectRegion(issuer, subject) {
     return 'central';
   }
 
+  if (
+    normalizedIssuer.includes('指揮部') ||
+    normalizedSubject.includes('指揮部')
+  ) {
+    return 'central';
+  }
+
   const matchRegion = (text) => {
     if (!text) {
       return null;
