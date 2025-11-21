@@ -29,6 +29,7 @@ const state = {
     statuses: new Set(DEFAULT_STATUS_VALUES),
     region: 'all',
     timeRange: '3m',
+    simple: false,
   },
   totalRecords: null,
   pagination: {
@@ -79,6 +80,7 @@ const elements = {
   sortSelect: document.getElementById('sortSelect'),
   regionSelect: document.getElementById('regionFilter'),
   timeRange: document.getElementById('timeRange'),
+  simpleToggle: document.getElementById('simpleView'),
   clearFilters: document.getElementById('clearFilters'),
   updatedAt: document.getElementById('updatedAt'),
   scrollSentinel: document.getElementById('scrollSentinel'),
@@ -205,6 +207,14 @@ if (elements.timeRange) {
   });
 }
 
+if (elements.simpleToggle) {
+  elements.simpleToggle.addEventListener('click', () => {
+    state.filters.simple = !state.filters.simple;
+    elements.simpleToggle.classList.toggle('active', state.filters.simple);
+    render();
+  });
+}
+
 elements.clearFilters.addEventListener('click', () => {
   const hasSearch = Boolean(state.filters.search);
   const hasSort = state.filters.sort !== 'date-desc';
@@ -220,6 +230,7 @@ elements.clearFilters.addEventListener('click', () => {
   state.filters.sort = 'date-desc';
   state.filters.region = 'all';
   state.filters.timeRange = '3m';
+  state.filters.simple = false;
   resetStatusFilters();
 
   elements.searchInput.value = '';
@@ -229,6 +240,9 @@ elements.clearFilters.addEventListener('click', () => {
   }
   if (elements.timeRange) {
     elements.timeRange.value = '3m';
+  }
+  if (elements.simpleToggle) {
+    elements.simpleToggle.classList.remove('active');
   }
 
   render();
@@ -667,9 +681,63 @@ function createDocumentCard(doc) {
   return card;
 }
 
+function createSimpleDocumentCard(doc) {
+  const card = document.createElement('article');
+  card.className = 'document-card document-card--simple';
+
+  const header = document.createElement('header');
+  header.className = 'document-card__header';
+
+  const badge = document.createElement('span');
+  badge.className = 'badge badge--expired';
+  badge.textContent = BADGE_TEXT.expired ?? '較早';
+  header.appendChild(badge);
+
+  const issued = document.createElement('div');
+  issued.className = 'simple-row';
+  const issuedLabel = document.createElement('span');
+  issuedLabel.className = 'document-card__label';
+  issuedLabel.textContent = '發文日期';
+  const issuedDate = document.createElement('time');
+  issuedDate.dateTime = doc.date ?? '';
+  issuedDate.textContent = doc.date ?? '未提供';
+  issued.append(issuedLabel, issuedDate);
+
+  const title = document.createElement('h3');
+  title.className = 'document-card__title';
+  title.textContent = doc.subject?.trim() || '未提供主旨';
+
+  const publish = document.createElement('div');
+  publish.className = 'simple-row';
+  const publishLabel = document.createElement('span');
+  publishLabel.className = 'document-card__label';
+  publishLabel.textContent = '發布';
+  const publishNote = document.createElement('span');
+  if (doc.daysSinceIssued != null) {
+    publishNote.textContent = `${doc.daysSinceIssued} 天`;
+  } else {
+    publishNote.textContent = '—';
+  }
+  publish.append(publishLabel, publishNote);
+
+  const issuer = document.createElement('div');
+  issuer.className = 'simple-row';
+  const issuerLabel = document.createElement('span');
+  issuerLabel.className = 'document-card__label';
+  issuerLabel.textContent = '發文單位';
+  const issuerText = document.createElement('span');
+  issuerText.textContent = doc.issuer ?? '未提供';
+  issuer.append(issuerLabel, issuerText);
+
+  card.append(header, issued, title, publish, issuer);
+  return card;
+}
+
 function renderDocuments(documents) {
   elements.documentList.replaceChildren(
-    ...documents.map((doc) => createDocumentCard(doc)),
+    ...documents.map((doc) =>
+      state.filters.simple ? createSimpleDocumentCard(doc) : createDocumentCard(doc),
+    ),
   );
 }
 

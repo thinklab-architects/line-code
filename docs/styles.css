@@ -249,6 +249,28 @@ a:focus-visible {
   min-width: min(220px, 100%);
 }
 
+.button-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+#simpleView {
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--ink-soft);
+  background: transparent;
+  border-radius: 999px;
+  color: var(--ink-strong);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+#simpleView.active {
+  background: var(--ink-strong);
+  color: #fff;
+  border-color: var(--ink-strong);
+}
+
 .controls select {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -453,6 +475,19 @@ button:focus-visible {
   font-size: 0.98rem;
   line-height: 1.7;
   color: var(--ink-soft);
+}
+
+.document-card--simple {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.simple-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  font-size: 0.95rem;
+  color: var(--ink-strong);
 }
 
 .meta-item {
