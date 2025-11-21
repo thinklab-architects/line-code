@@ -52,21 +52,57 @@ function isPriorityIssuer(issuer) {
 }
 
 const REGION_RULES = [
-  { region: 'central', keywords: ['內政部', '國土管理署', '行政院', '經濟部', '中央'] },
+  {
+    region: 'central',
+    keywords: [
+      '內政部',
+      '國土管理署',
+      '行政院',
+      '經濟部',
+      '中央',
+      '中華民國全國建築師公會',
+      '環境部',
+    ],
+  },
   { region: 'kaohsiung', keywords: ['高雄'] },
   { region: 'taipei', keywords: ['臺北', '台北'] },
   { region: 'newTaipei', keywords: ['新北'] },
 ];
 
-function detectRegion(issuer) {
-  if (!issuer) {
-    return 'other';
+function detectRegion(issuer, subject) {
+  const normalizedIssuer = issuer?.trim() ?? '';
+  const normalizedSubject = subject?.trim() ?? '';
+
+  if (
+    normalizedSubject &&
+    normalizedSubject.includes('法規研究委員會') &&
+    normalizedSubject.includes('座談會工作報告')
+  ) {
+    return 'kaohsiung';
   }
 
-  const normalized = issuer.trim();
-  for (const rule of REGION_RULES) {
-    if (rule.keywords.some((keyword) => normalized.includes(keyword))) {
-      return rule.region;
+  const matchRegion = (text) => {
+    if (!text) {
+      return null;
+    }
+
+    for (const rule of REGION_RULES) {
+      if (rule.keywords.some((keyword) => text.includes(keyword))) {
+        return rule.region;
+      }
+    }
+    return null;
+  };
+
+  const issuerRegion = matchRegion(normalizedIssuer);
+  if (issuerRegion) {
+    return issuerRegion;
+  }
+
+  if (!normalizedIssuer) {
+    const subjectRegion = matchRegion(normalizedSubject);
+    if (subjectRegion) {
+      return subjectRegion;
     }
   }
 
@@ -301,7 +337,7 @@ function enrichDocument(doc) {
   const issuedDate = parseDate(doc.date);
   const deadlineDate = parseDate(doc.deadline);
   const today = getTaipeiToday();
-  const region = detectRegion(doc.issuer);
+  const region = detectRegion(doc.issuer, doc.subject);
 
   let deadlineCategory = 'expired';
   let daysUntilDeadline = null;
@@ -685,8 +721,23 @@ function createDocumentCard(doc) {
 }
 
 function createSimpleDocumentCard(doc) {
+  const priorityIssuerLabel = isPriorityIssuer(doc.issuer)
+    ? PRIORITY_ISSUERS.find((value) => doc.issuer?.includes(value))
+    : null;
+
   const card = document.createElement('article');
-  card.className = 'document-card document-card--simple';
+  const classNames = ['document-card', 'document-card--simple'];
+  if (priorityIssuerLabel) {
+    classNames.push('document-card--priority');
+  }
+  card.className = classNames.join(' ');
+
+  if (priorityIssuerLabel) {
+    const priorityFlag = document.createElement('span');
+    priorityFlag.className = 'document-card__flag';
+    priorityFlag.textContent = `${priorityIssuerLabel}｜重要`;
+    card.appendChild(priorityFlag);
+  }
 
   const issued = document.createElement('div');
   issued.className = 'simple-row';
