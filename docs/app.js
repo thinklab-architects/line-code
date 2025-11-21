@@ -10,6 +10,14 @@ const BADGE_TEXT = {
 
 const PAGE_CHUNK = 20;
 const DEFAULT_STATUS_VALUES = ['due-soon', 'active', 'expired'];
+const REGION_FILTERS = {
+  all: '全部',
+  central: '中央',
+  kaohsiung: '高雄',
+  taipei: '臺北',
+  newTaipei: '新北',
+  other: '其他',
+};
 const PRIORITY_ISSUERS = ['內政部國土管理署', '內政部'];
 
 const state = {
@@ -19,6 +27,7 @@ const state = {
     search: '',
     sort: 'date-desc',
     statuses: new Set(DEFAULT_STATUS_VALUES),
+    region: 'all',
   },
   pagination: {
     chunkSize: PAGE_CHUNK,
@@ -39,6 +48,28 @@ function isPriorityIssuer(issuer) {
   return PRIORITY_ISSUERS.some((value) => issuer.includes(value));
 }
 
+const REGION_RULES = [
+  { region: 'central', keywords: ['內政部', '國土管理署', '行政院', '經濟部', '中央'] },
+  { region: 'kaohsiung', keywords: ['高雄'] },
+  { region: 'taipei', keywords: ['臺北', '台北'] },
+  { region: 'newTaipei', keywords: ['新北'] },
+];
+
+function detectRegion(issuer) {
+  if (!issuer) {
+    return 'other';
+  }
+
+  const normalized = issuer.trim();
+  for (const rule of REGION_RULES) {
+    if (rule.keywords.some((keyword) => normalized.includes(keyword))) {
+      return rule.region;
+    }
+  }
+
+  return 'other';
+}
+
 bootstrapLayout();
 
 const elements = {
@@ -46,6 +77,7 @@ const elements = {
   documentList: document.getElementById('documentList'),
   searchInput: document.getElementById('search'),
   sortSelect: document.getElementById('sortSelect'),
+  regionSelect: document.getElementById('regionFilter'),
   clearFilters: document.getElementById('clearFilters'),
   updatedAt: document.getElementById('updatedAt'),
   scrollSentinel: document.getElementById('scrollSentinel'),
@@ -158,6 +190,13 @@ elements.sortSelect.addEventListener('change', (event) => {
   render();
 });
 
+if (elements.regionSelect) {
+  elements.regionSelect.addEventListener('change', (event) => {
+    state.filters.region = event.target.value;
+    render();
+  });
+}
+
 elements.clearFilters.addEventListener('click', () => {
   const hasSearch = Boolean(state.filters.search);
   const hasSort = state.filters.sort !== 'date-desc';
@@ -171,10 +210,14 @@ elements.clearFilters.addEventListener('click', () => {
 
   state.filters.search = '';
   state.filters.sort = 'date-desc';
+  state.filters.region = 'all';
   resetStatusFilters();
 
   elements.searchInput.value = '';
   elements.sortSelect.value = 'date-desc';
+  if (elements.regionSelect) {
+    elements.regionSelect.value = 'all';
+  }
 
   render();
 });
@@ -326,6 +369,7 @@ function enrichDocument(doc) {
   const issuedDate = parseDate(doc.date);
   const deadlineDate = parseDate(doc.deadline);
   const today = getTaipeiToday();
+  const region = detectRegion(doc.issuer);
 
   let deadlineCategory = 'expired';
   let daysUntilDeadline = null;
@@ -361,6 +405,7 @@ function enrichDocument(doc) {
 
   return {
     ...doc,
+    region,
     issuedDate,
     deadlineDate,
     deadlineCategory,
@@ -482,6 +527,10 @@ function applyFilters() {
     results = results.filter((doc) =>
       state.filters.statuses.has(doc.deadlineCategory ?? 'expired'),
     );
+  }
+
+  if (state.filters.region !== 'all') {
+    results = results.filter((doc) => doc.region === state.filters.region);
   }
 
   return sortDocuments(results);
@@ -724,6 +773,9 @@ async function loadDocuments() {
 
     if (payload.updatedAt) {
       elements.updatedAt.textContent = formatUpdatedAt(payload.updatedAt);
+    }
+    if (elements.regionSelect) {
+      elements.regionSelect.value = state.filters.region;
     }
 
     setDocumentListVisibility(state.filtered.length > 0);
