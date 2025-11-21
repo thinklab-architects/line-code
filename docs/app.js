@@ -571,14 +571,8 @@ function applyFilters() {
 }
 
 function updateStatus(filtered, total) {
-  const hasCustomFilters =
-    state.filters.search ||
-    state.filters.region !== 'all' ||
-    state.filters.statuses.size !== DEFAULT_STATUS_VALUES.length ||
-    state.filters.sort !== 'date-desc';
-
-  const displayTotal =
-    !hasCustomFilters && state.totalRecords ? state.totalRecords : filtered;
+  const filteredCount = filtered;
+  const totalCount = state.totalRecords ?? total ?? filtered;
 
   elements.status.classList.remove('status--error');
 
@@ -592,7 +586,7 @@ function updateStatus(filtered, total) {
     return;
   }
 
-  elements.status.textContent = `共 ${displayTotal} 筆紀錄`;
+  elements.status.textContent = `共 ${filteredCount}/${totalCount} 筆紀錄`;
 }
 
 function setDocumentListVisibility(hasResults) {
