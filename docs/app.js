@@ -9,7 +9,8 @@ const BADGE_TEXT = {
   'no-deadline': '無日期',
 };
 
-const DEFAULT_STATUS_VALUES = ['due-soon', 'active', 'no-deadline'];
+const PAGE_CHUNK = 20;
+const DEFAULT_STATUS_VALUES = ['due-soon', 'active', 'expired', 'no-deadline'];
 const PRIORITY_ISSUERS = ['內政部國土管理署', '內政部'];
 
 const state = {
@@ -19,6 +20,10 @@ const state = {
     search: '',
     sort: 'date-desc',
     statuses: new Set(DEFAULT_STATUS_VALUES),
+  },
+  pagination: {
+    chunkSize: PAGE_CHUNK,
+    visibleCount: PAGE_CHUNK,
   },
 };
 
@@ -44,11 +49,61 @@ const elements = {
   sortSelect: document.getElementById('sortSelect'),
   clearFilters: document.getElementById('clearFilters'),
   updatedAt: document.getElementById('updatedAt'),
+  scrollSentinel: document.getElementById('scrollSentinel'),
 };
 
 const statusCheckboxes = Array.from(
   document.querySelectorAll('input[name="statusFilter"]'),
 );
+
+const loadMoreObserver = new IntersectionObserver(
+  (entries) => {
+    if (entries.some((entry) => entry.isIntersecting)) {
+      loadMoreResults();
+    }
+  },
+  { root: null, threshold: 0.2 },
+);
+
+if (elements.scrollSentinel) {
+  loadMoreObserver.observe(elements.scrollSentinel);
+}
+
+function resetPagination() {
+  state.pagination.visibleCount = state.pagination.chunkSize;
+}
+
+function getVisibleDocuments() {
+  return state.filtered.slice(0, state.pagination.visibleCount);
+}
+
+function hasMoreResults() {
+  return state.pagination.visibleCount < state.filtered.length;
+}
+
+function updateSentinelVisibility() {
+  if (!elements.scrollSentinel) {
+    return;
+  }
+
+  const shouldHide = state.filtered.length === 0 || !hasMoreResults();
+  elements.scrollSentinel.hidden = shouldHide;
+}
+
+function loadMoreResults() {
+  if (!state.filtered.length || !hasMoreResults()) {
+    updateSentinelVisibility();
+    return;
+  }
+
+  state.pagination.visibleCount = Math.min(
+    state.filtered.length,
+    state.pagination.visibleCount + state.pagination.chunkSize,
+  );
+
+  renderDocuments(getVisibleDocuments());
+  updateSentinelVisibility();
+}
 
 function syncStatusCheckboxes() {
   statusCheckboxes.forEach((checkbox) => {
@@ -57,7 +112,7 @@ function syncStatusCheckboxes() {
 }
 
 function resetStatusFilters() {
-  state.filters.statuses = new Set(DEFAULT_STATUS_VALUES);
+state.filters.statuses = new Set(DEFAULT_STATUS_VALUES);
   syncStatusCheckboxes();
 }
 
@@ -630,14 +685,28 @@ function renderDocuments(documents) {
   );
 }
 
-function render() {
+function render({ preservePagination = false } = {}) {
   state.filtered = applyFilters();
+
+  if (!preservePagination) {
+    resetPagination();
+  } else {
+    state.pagination.visibleCount = Math.min(
+      state.filtered.length,
+      Math.max(state.pagination.visibleCount, state.pagination.chunkSize),
+    );
+  }
+
   updateStatus(state.filtered.length, state.documents.length);
   setDocumentListVisibility(state.filtered.length > 0);
 
   if (state.filtered.length) {
-    renderDocuments(state.filtered);
+    renderDocuments(getVisibleDocuments());
+  } else {
+    elements.documentList.replaceChildren();
   }
+
+  updateSentinelVisibility();
 }
 
 async function loadDocuments() {

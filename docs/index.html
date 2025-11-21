@@ -58,10 +58,6 @@
             <span>近期（三個月內）</span>
           </label>
           <label class="status-option">
-            <input type="checkbox" name="statusFilter" value="expired" />
-            <span>較早</span>
-          </label>
-          <label class="status-option">
             <input type="checkbox" name="statusFilter" value="no-deadline" checked />
             <span>未備日期</span>
           </label>
@@ -83,6 +79,14 @@
       <section aria-live="polite">
         <div id="status" class="status">資料載入中...</div>
         <div id="documentList" class="document-grid" hidden></div>
+        <div
+          id="scrollSentinel"
+          class="scroll-sentinel"
+          aria-hidden="true"
+          hidden
+        >
+          載入更多紀錄...
+        </div>
       </section>
     </main>
 
