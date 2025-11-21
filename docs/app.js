@@ -8,7 +8,7 @@ const BADGE_TEXT = {
   expired: '較早',
 };
 
-const PAGE_CHUNK = 20;
+const PAGE_CHUNK = 21;
 const DEFAULT_STATUS_VALUES = ['due-soon', 'active', 'expired'];
 const REGION_FILTERS = {
   all: '全部',
