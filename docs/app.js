@@ -160,6 +160,27 @@ function detectRegion(issuer, subject) {
     return 'central';
   }
 
+  if (
+    normalizedIssuer.includes('財政部國有財產署') ||
+    normalizedSubject.includes('財政部國有財產署')
+  ) {
+    return 'central';
+  }
+
+  if (
+    normalizedIssuer.includes('工業園區管理局') ||
+    normalizedSubject.includes('工業園區管理局')
+  ) {
+    return 'central';
+  }
+
+  if (
+    normalizedIssuer.includes('財團法人工業技術研究院') ||
+    normalizedSubject.includes('財團法人工業技術研究院')
+  ) {
+    return 'central';
+  }
+
   const matchRegion = (text) => {
     if (!text) {
       return null;
