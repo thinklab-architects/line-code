@@ -266,9 +266,9 @@ a:focus-visible {
 }
 
 #simpleView.active {
-  background: var(--ink-strong);
-  color: #fff;
-  border-color: var(--ink-strong);
+  background: #facc15;
+  color: #854d0e;
+  border-color: #facc15;
 }
 
 .controls select {

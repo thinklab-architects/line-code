@@ -4,8 +4,8 @@ const RECENT_ISSUED_DAYS = 14;
 const ACTIVE_ISSUED_DAYS = 90;
 const BADGE_TEXT = {
   'due-soon': '最新',
-  active: '近期',
-  expired: '較早',
+  active: '',
+  expired: '',
 };
 
 const PAGE_CHUNK = 21;
@@ -593,10 +593,13 @@ function createDocumentCard(doc) {
   const header = document.createElement('header');
   header.className = 'document-card__header';
 
-  const badge = document.createElement('span');
-  badge.className = `badge badge--${doc.deadlineCategory}`;
-  badge.textContent = BADGE_TEXT[doc.deadlineCategory] ?? '狀態不明';
-  header.appendChild(badge);
+  const badgeText = BADGE_TEXT[doc.deadlineCategory];
+  if (badgeText) {
+    const badge = document.createElement('span');
+    badge.className = `badge badge--${doc.deadlineCategory}`;
+    badge.textContent = badgeText;
+    header.appendChild(badge);
+  }
 
   if (priorityIssuerLabel) {
     const priorityFlag = document.createElement('span');
@@ -685,14 +688,6 @@ function createSimpleDocumentCard(doc) {
   const card = document.createElement('article');
   card.className = 'document-card document-card--simple';
 
-  const header = document.createElement('header');
-  header.className = 'document-card__header';
-
-  const badge = document.createElement('span');
-  badge.className = 'badge badge--expired';
-  badge.textContent = BADGE_TEXT.expired ?? '較早';
-  header.appendChild(badge);
-
   const issued = document.createElement('div');
   issued.className = 'simple-row';
   const issuedLabel = document.createElement('span');
@@ -729,7 +724,7 @@ function createSimpleDocumentCard(doc) {
   issuerText.textContent = doc.issuer ?? '未提供';
   issuer.append(issuerLabel, issuerText);
 
-  card.append(header, issued, title, publish, issuer);
+  card.append(issued, title, publish, issuer);
   return card;
 }
 
