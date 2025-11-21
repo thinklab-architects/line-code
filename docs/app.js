@@ -139,6 +139,13 @@ function detectRegion(issuer, subject) {
     return 'central';
   }
 
+  if (
+    normalizedIssuer.includes('財團法人都市更新研究發展基金會') ||
+    normalizedSubject.includes('財團法人都市更新研究發展基金會')
+  ) {
+    return 'central';
+  }
+
   const matchRegion = (text) => {
     if (!text) {
       return null;
