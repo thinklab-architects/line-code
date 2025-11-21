@@ -126,6 +126,13 @@ function detectRegion(issuer, subject) {
   }
 
   if (
+    normalizedIssuer.includes('高市政府工務局') ||
+    normalizedSubject.includes('高市政府工務局')
+  ) {
+    return 'kaohsiung';
+  }
+
+  if (
     normalizedIssuer.includes('科學園區管理局') ||
     normalizedSubject.includes('科學園區管理局')
   ) {
