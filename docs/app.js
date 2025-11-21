@@ -28,6 +28,7 @@ const state = {
     sort: 'date-desc',
     statuses: new Set(DEFAULT_STATUS_VALUES),
     region: 'all',
+    timeRange: '3m',
   },
   totalRecords: null,
   pagination: {
@@ -79,6 +80,7 @@ const elements = {
   searchInput: document.getElementById('search'),
   sortSelect: document.getElementById('sortSelect'),
   regionSelect: document.getElementById('regionFilter'),
+  timeRange: document.getElementById('timeRange'),
   clearFilters: document.getElementById('clearFilters'),
   updatedAt: document.getElementById('updatedAt'),
   scrollSentinel: document.getElementById('scrollSentinel'),
@@ -198,6 +200,13 @@ if (elements.regionSelect) {
   });
 }
 
+if (elements.timeRange) {
+  elements.timeRange.addEventListener('change', (event) => {
+    state.filters.timeRange = event.target.value;
+    render();
+  });
+}
+
 elements.clearFilters.addEventListener('click', () => {
   const hasSearch = Boolean(state.filters.search);
   const hasSort = state.filters.sort !== 'date-desc';
@@ -212,12 +221,16 @@ elements.clearFilters.addEventListener('click', () => {
   state.filters.search = '';
   state.filters.sort = 'date-desc';
   state.filters.region = 'all';
+  state.filters.timeRange = '3m';
   resetStatusFilters();
 
   elements.searchInput.value = '';
   elements.sortSelect.value = 'date-desc';
   if (elements.regionSelect) {
     elements.regionSelect.value = 'all';
+  }
+  if (elements.timeRange) {
+    elements.timeRange.value = '3m';
   }
 
   render();
@@ -532,6 +545,25 @@ function applyFilters() {
 
   if (state.filters.region !== 'all') {
     results = results.filter((doc) => doc.region === state.filters.region);
+  }
+
+  if (state.filters.timeRange && state.filters.timeRange !== 'all') {
+    results = results.filter((doc) => {
+      if (doc.daysSinceIssued == null) {
+        return false;
+      }
+
+      switch (state.filters.timeRange) {
+        case '3m':
+          return doc.daysSinceIssued <= 90;
+        case '1y':
+          return doc.daysSinceIssued <= 365;
+        case 'gt1y':
+          return doc.daysSinceIssued > 365;
+        default:
+          return true;
+      }
+    });
   }
 
   return sortDocuments(results);
