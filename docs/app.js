@@ -139,9 +139,26 @@ function detectRegion(issuer, subject) {
     return 'kaohsiung';
   }
 
+  if (normalizedIssuer.includes('岡山') || normalizedSubject.includes('岡山')) {
+    return 'kaohsiung';
+  }
+
+  if (
+    normalizedIssuer.includes('東方設計大學') ||
+    normalizedSubject.includes('東方設計大學')
+  ) {
+    return 'kaohsiung';
+  }
+
+  if (normalizedIssuer.includes('高市') || normalizedSubject.includes('高市')) {
+    return 'kaohsiung';
+  }
+
   if (
     normalizedIssuer.includes('科學園區管理局') ||
-    normalizedSubject.includes('科學園區管理局')
+    normalizedSubject.includes('科學園區管理局') ||
+    normalizedIssuer.includes('工業園區理局') ||
+    normalizedSubject.includes('工業園區理局')
   ) {
     return 'central';
   }
@@ -168,6 +185,13 @@ function detectRegion(issuer, subject) {
   }
 
   if (
+    normalizedIssuer.includes('財政部') ||
+    normalizedSubject.includes('財政部')
+  ) {
+    return 'central';
+  }
+
+  if (
     normalizedIssuer.includes('工業園區管理局') ||
     normalizedSubject.includes('工業園區管理局')
   ) {
@@ -175,8 +199,28 @@ function detectRegion(issuer, subject) {
   }
 
   if (
+    normalizedIssuer.includes('台灣建築中心') ||
+    normalizedSubject.includes('台灣建築中心') ||
+    normalizedIssuer.includes('臺灣建築中心') ||
+    normalizedSubject.includes('臺灣建築中心')
+  ) {
+    return 'central';
+  }
+
+  if (
+    normalizedIssuer.includes('海洋國家公園管理處') ||
+    normalizedSubject.includes('海洋國家公園管理處') ||
+    normalizedIssuer.includes('墾丁國家公園管理處') ||
+    normalizedSubject.includes('墾丁國家公園管理處')
+  ) {
+    return 'central';
+  }
+
+  if (
     normalizedIssuer.includes('財團法人工業技術研究院') ||
-    normalizedSubject.includes('財團法人工業技術研究院')
+    normalizedSubject.includes('財團法人工業技術研究院') ||
+    normalizedIssuer.includes('工業技術研究院') ||
+    normalizedSubject.includes('工業技術研究院')
   ) {
     return 'central';
   }
