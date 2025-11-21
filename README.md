@@ -15,7 +15,7 @@
    ```bash
    npm install
    ```
-2. 擷取最新資料（會逐頁抓取 3,800+ 筆法規與附件，約需 6~7 分鐘；結果會寫入 `docs/data/documents.json`，前端載入即更新）
+2. 擷取最新資料（會逐頁抓取 3,800+ 筆法規與附件，約需 6~7 分鐘；結果會寫入 `docs/data/documents.json`，前端載入即更新，可視需求設定排程每小時執行）
    ```bash
    npm run fetch
    ```
