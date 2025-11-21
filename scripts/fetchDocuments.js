@@ -239,8 +239,18 @@ async function fetchAllListPages() {
 
   for (let page = 1; page <= totalPages; page += 1) {
     const url = buildListUrl(page);
-    const html = await fetchPage(url);
-    const { documents: entries, pagination } = parseList(html);
+    let entries = [];
+    let pagination = { totalPages };
+
+    try {
+      const html = await fetchPage(url);
+      const parsed = parseList(html);
+      entries = parsed.documents;
+      pagination = parsed.pagination;
+    } catch (error) {
+      console.warn(`Skip page ${page}: ${error.message}`);
+      continue;
+    }
 
     if (page === 1 && pagination.totalRecords) {
       console.log(
