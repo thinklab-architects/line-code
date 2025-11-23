@@ -566,24 +566,26 @@ button:focus-visible {
 .attachment-link {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.45rem;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #2ea44f 0%, #238636 100%);
+  padding: 0.75rem 1.2rem;
+  border-radius: 12px;
+  background: #111;
   color: #fff;
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.01em;
-  border: 1px solid #1f6f2c;
-  box-shadow: 0 8px 18px rgba(35, 134, 54, 0.28);
+  border: 1px solid #0f172a;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.3);
+  text-decoration: none;
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
 .attachment-link:hover,
 .attachment-link:focus-visible {
-  background: linear-gradient(180deg, #2fa24f 0%, #1f7a32 100%);
+  background: #333;
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(35, 134, 54, 0.34);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.36);
 }
 
 .attachment-empty {
@@ -681,22 +683,22 @@ button:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.9rem 1.8rem;
+  padding: 0.8rem 1.6rem;
   border-radius: 12px;
-  background: linear-gradient(180deg, #2ea44f 0%, #238636 100%);
+  background: #111;
   color: #fff;
   font-weight: 700;
   text-decoration: none;
-  border: 1px solid #1f6f2c;
-  box-shadow: 0 12px 28px rgba(35, 134, 54, 0.3);
+  border: 1px solid #0f172a;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.3);
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
 .modal__download:hover,
 .modal__download:focus-visible {
-  background: linear-gradient(180deg, #2fa24f 0%, #1f7a32 100%);
+  background: #333;
   transform: translateY(-1px);
-  box-shadow: 0 14px 32px rgba(35, 134, 54, 0.35);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.35);
 }
 
 .app-footer {
