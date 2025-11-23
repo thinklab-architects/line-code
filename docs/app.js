@@ -1054,7 +1054,7 @@ function openPreview(url, label) {
   }
   if (elements.modalDownload) {
     elements.modalDownload.href = url;
-    elements.modalDownload.textContent = `下載${label || '檔案'}`;
+    elements.modalDownload.textContent = '下載';
   }
   if (elements.modalTitle) {
     elements.modalTitle.textContent = label || '檔案預覽';
