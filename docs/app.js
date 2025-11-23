@@ -772,6 +772,9 @@ function createDocumentCard(doc) {
 
   const card = document.createElement('article');
   const classNames = ['document-card', `document-card--${doc.deadlineCategory}`];
+  if (doc.region === 'kaohsiung') {
+    classNames.push('document-card--kaohsiung');
+  }
   if (priorityIssuerLabel) {
     classNames.push('document-card--priority');
   }
@@ -878,6 +881,9 @@ function createSimpleDocumentCard(doc) {
 
   const card = document.createElement('article');
   const classNames = ['document-card', 'document-card--simple'];
+  if (doc.region === 'kaohsiung') {
+    classNames.push('document-card--kaohsiung');
+  }
   if (priorityIssuerLabel) {
     classNames.push('document-card--priority');
   }
