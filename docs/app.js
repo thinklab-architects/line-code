@@ -732,8 +732,7 @@ function createAttachmentList(doc) {
     link.href = attachment.url;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
-    link.textContent =
-      attachment.label?.trim() || `附件 ${String(index + 1).padStart(2, '0')}`;
+    link.textContent = '檔案下載';
     list.appendChild(link);
   });
 
@@ -742,10 +741,7 @@ function createAttachmentList(doc) {
 
 function createRelatedLinkList(doc) {
   if (!doc.relatedLinks?.length) {
-    const empty = document.createElement('span');
-    empty.className = 'attachment-empty';
-    empty.textContent = '無連結';
-    return empty;
+    return null;
   }
 
   const list = document.createElement('div');
@@ -852,15 +848,24 @@ function createDocumentCard(doc) {
     issuedContent.append(fallback);
   }
 
-  metaList.append(
+  const metaItems = [
     createMetaItem('發文日期', issuedContent),
     createMetaItem('發文單位', doc.issuer ?? '未提供'),
     createMetaItem('條文編號', doc.articleNumber ?? doc.serial ?? '未提供'),
     createMetaItem('發文字號', doc.documentNumber ?? '未提供'),
-    createMetaItem('分類', doc.category ?? '未提供'),
-    createMetaItem('附件下載', createAttachmentList(doc)),
-    createMetaItem('相關連結', createRelatedLinkList(doc)),
-  );
+  ];
+
+  const attachments = createAttachmentList(doc);
+  if (attachments) {
+    metaItems.push(createMetaItem('附件下載', attachments));
+  }
+
+  const relatedLinks = createRelatedLinkList(doc);
+  if (relatedLinks) {
+    metaItems.push(createMetaItem('相關連結', relatedLinks));
+  }
+
+  metaList.append(...metaItems);
 
   card.append(header, title, metaList);
 
