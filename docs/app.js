@@ -902,7 +902,17 @@ function createSimpleDocumentCard(doc) {
 
   const title = document.createElement('h3');
   title.className = 'document-card__title';
-  title.textContent = doc.subject?.trim() || '未提供主旨';
+  const simpleSubject = doc.subject?.trim() || '未提供主旨';
+  if (doc.subjectUrl) {
+    const link = document.createElement('a');
+    link.href = doc.subjectUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = simpleSubject;
+    title.appendChild(link);
+  } else {
+    title.textContent = simpleSubject;
+  }
 
   const publish = document.createElement('div');
   publish.className = 'simple-row';
