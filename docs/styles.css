@@ -579,6 +579,108 @@ button:focus-visible {
   font-size: 0.9rem;
 }
 
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 999;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.modal__content {
+  position: relative;
+  width: min(960px, 92vw);
+  height: min(80vh, 720px);
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 40px 90px rgba(15, 23, 42, 0.45);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.4rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.modal__title {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.modal__close {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: #111;
+}
+
+.modal__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.4rem;
+  background: #f4f6fb;
+}
+
+.modal__body iframe {
+  flex: 1;
+  border: none;
+  border-radius: 12px;
+}
+
+.modal__fallback {
+  margin-top: 1rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.modal__fallback a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.modal__actions {
+  padding: 1rem 1.4rem 1.4rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal__download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 1.6rem;
+  border-radius: 12px;
+  background: #111;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.modal__download:hover,
+.modal__download:focus-visible {
+  background: #333;
+}
+
 .app-footer {
   margin: clamp(3.2rem, 6vw, 4.6rem) 0 clamp(2.4rem, 4vw, 3.4rem);
   color: var(--ink-soft);

@@ -1,4 +1,5 @@
 const DATA_URL = './data/documents.json';
+const PREVIEW_VIEWER_BASE = 'https://docs.google.com/viewer?embedded=true&url=';
 const DEADLINE_SOON_DAYS = 7;
 const RECENT_ISSUED_DAYS = 14;
 const ACTIVE_ISSUED_DAYS = 90;
@@ -271,6 +272,12 @@ const elements = {
   clearFilters: document.getElementById('clearFilters'),
   updatedAt: document.getElementById('updatedAt'),
   scrollSentinel: document.getElementById('scrollSentinel'),
+  previewModal: document.getElementById('previewModal'),
+  modalFrame: document.getElementById('modalFrame'),
+  modalTitle: document.getElementById('modalTitle'),
+  modalDownload: document.getElementById('modalDownload'),
+  modalFallback: document.getElementById('modalFallback'),
+  modalFallbackLink: document.getElementById('modalFallbackLink'),
 };
 
 const statusCheckboxes = Array.from(
@@ -733,6 +740,13 @@ function createAttachmentList(doc) {
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
     link.textContent = '檔案下載';
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      openPreview(
+        attachment.url,
+        attachment.label?.trim() || `附件 ${String(index + 1).padStart(2, '0')}`,
+      );
+    });
     list.appendChild(link);
   });
 
@@ -1015,3 +1029,91 @@ async function loadDocuments() {
     elements.status.classList.add('status--error');
   }
 }
+
+function closePreview() {
+  if (!elements.previewModal) return;
+  elements.previewModal.hidden = true;
+  elements.previewModal.setAttribute('aria-hidden', 'true');
+  if (elements.modalFrame) {
+    elements.modalFrame.src = 'about:blank';
+  }
+  if (elements.modalDownload) {
+    elements.modalDownload.href = '#';
+  }
+}
+
+function openPreview(url, label) {
+  if (!url || !elements.previewModal || !elements.modalFrame) return;
+
+  elements.previewModal.hidden = false;
+  elements.previewModal.removeAttribute('aria-hidden');
+  elements.modalFrame.src = PREVIEW_VIEWER_BASE + encodeURIComponent(url);
+
+  if (elements.modalFallback) {
+    elements.modalFallback.hidden = true;
+  }
+  if (elements.modalDownload) {
+    elements.modalDownload.href = url;
+    elements.modalDownload.textContent = `下載${label || '檔案'}`;
+  }
+  if (elements.modalTitle) {
+    elements.modalTitle.textContent = label || '檔案預覽';
+  }
+  if (elements.modalFallbackLink) {
+    elements.modalFallbackLink.href = url;
+  }
+
+  let loaded = false;
+  const onLoad = () => {
+    loaded = true;
+    if (elements.modalFallback) {
+      elements.modalFallback.hidden = true;
+    }
+    cleanup();
+  };
+
+  const onError = () => {
+    loaded = true;
+    if (elements.modalFallback) {
+      elements.modalFallback.hidden = false;
+    }
+    cleanup();
+  };
+
+  const cleanup = () => {
+    try {
+      elements.modalFrame?.removeEventListener('load', onLoad);
+      elements.modalFrame?.removeEventListener('error', onError);
+    } catch {
+      // ignore
+    }
+    clearTimeout(timeoutId);
+  };
+
+  elements.modalFrame.addEventListener('load', onLoad);
+  elements.modalFrame.addEventListener('error', onError);
+
+  const timeoutId = setTimeout(() => {
+    if (!loaded && elements.modalFallback) {
+      elements.modalFallback.hidden = false;
+    }
+  }, 2500);
+}
+
+elements.previewModal
+  ?.querySelectorAll('[data-close-modal]')
+  .forEach((trigger) => {
+    trigger.addEventListener('click', closePreview);
+  });
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && elements.previewModal && !elements.previewModal.hidden) {
+    closePreview();
+  }
+});
+
+elements.modalFrame?.addEventListener('error', () => {
+  if (elements.modalFallback) {
+    elements.modalFallback.hidden = false;
+  }
+});
