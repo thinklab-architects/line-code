@@ -756,6 +756,18 @@ button:focus-visible {
   font-size: 0.9rem;
 }
 
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.footer-logo {
+  height: 22px;
+  width: auto;
+  display: inline-block;
+}
+
 .footer-updated {
   margin: 0;
   font-size: 0.9rem;
