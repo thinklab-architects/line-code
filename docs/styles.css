@@ -153,6 +153,7 @@ a:focus-visible {
   font-weight: 800;
   letter-spacing: -0.01em;
   font-family: 'Space Grotesk', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  line-height: 1.05;
 }
 
 .hero__title-wrap {
@@ -164,7 +165,7 @@ a:focus-visible {
 
 .hero__subtitle {
   margin: -0.25rem 0 0;
-  font-size: 2.1rem;
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--ink-muted);
