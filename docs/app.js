@@ -1061,7 +1061,7 @@ function openPreview(url, label) {
     elements.modalDownload.textContent = '下載';
   }
   if (elements.modalTitle) {
-    elements.modalTitle.textContent = label || '檔案預覽';
+    elements.modalTitle.textContent = '附件預覽';
   }
   if (elements.modalFallbackLink) {
     elements.modalFallbackLink.href = url;
