@@ -167,11 +167,12 @@ a:focus-visible {
 }
 
 .hero__subtitle {
-  margin: -0.25rem 0 0;
-  font-size: 1.5rem;
+  margin: 0;
+  font-size: 1.15rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--ink-muted);
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
 }
 
 .hero__subtitle a {
