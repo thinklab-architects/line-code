@@ -193,7 +193,7 @@ a:focus-visible {
 }
 
 .hero__logo {
-  height: 36px;
+  height: 32px;
   width: auto;
   display: block;
 }
@@ -769,7 +769,7 @@ button:focus-visible {
 }
 
 .footer-logo {
-  height: 22px;
+  height: 32px;
   width: auto;
   display: inline-block;
 }
