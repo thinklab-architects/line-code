@@ -19,7 +19,11 @@ const REGION_FILTERS = {
   newTaipei: '新北',
   other: '其他縣市',
 };
-const PRIORITY_ISSUERS = ['內政部國土管理署', '內政部'];
+const PRIORITY_ISSUERS = [
+  '內政部國土管理署',
+  '內政部',
+  '中華民國全國建築師公會',
+];
 
 const state = {
   documents: [],
