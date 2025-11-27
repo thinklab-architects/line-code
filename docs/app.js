@@ -13,6 +13,7 @@ const PAGE_CHUNK = 21;
 const DEFAULT_STATUS_VALUES = ['due-soon', 'active', 'expired'];
 const REGION_FILTERS = {
   all: '全部',
+  'central-kaohsiung': '中央/高雄',
   central: '中央',
   kaohsiung: '高雄',
   taipei: '臺北',
@@ -344,7 +345,7 @@ function syncStatusCheckboxes() {
 }
 
 function resetStatusFilters() {
-state.filters.statuses = new Set(DEFAULT_STATUS_VALUES);
+  state.filters.statuses = new Set(DEFAULT_STATUS_VALUES);
   syncStatusCheckboxes();
 }
 
@@ -503,7 +504,7 @@ function enrichDocument(doc) {
 
   let deadlineCategory = 'expired';
   let daysUntilDeadline = null;
-   let daysSinceIssued = null;
+  let daysSinceIssued = null;
 
   if (deadlineDate && today) {
     const diffDays = Math.floor(
@@ -660,7 +661,11 @@ function applyFilters() {
   }
 
   if (state.filters.region !== 'all') {
-    results = results.filter((doc) => doc.region === state.filters.region);
+    if (state.filters.region === 'central-kaohsiung') {
+      results = results.filter((doc) => doc.region === 'central' || doc.region === 'kaohsiung');
+    } else {
+      results = results.filter((doc) => doc.region === state.filters.region);
+    }
   }
 
   if (state.filters.timeRange && state.filters.timeRange !== 'all') {

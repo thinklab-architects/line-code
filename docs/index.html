@@ -1,186 +1,141 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
-    />
-    <meta name="theme-color" content="#e2e5eb" />
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <title>CODE INFO | 高雄市建築師公會</title>
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <div class="top-bar shell">
-      <div class="top-bar__search">
-        <label class="sr-only" for="search">搜尋條文、機關或字號</label>
-        <input
-          id="search"
-          type="search"
-          placeholder="搜尋條文、機關或字號"
-          autocomplete="off"
-        />
-      </div>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#e2e5eb" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <title>CODE INFO | 高雄市建築師公會</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <div class="top-bar shell">
+    <div class="top-bar__search">
+      <label class="sr-only" for="search">搜尋條文、機關或字號</label>
+      <input id="search" type="search" placeholder="搜尋條文、機關或字號" autocomplete="off" />
     </div>
+  </div>
 
-    <header class="hero">
-      <div class="shell hero__inner">
-        <div class="hero__lede">
-          <div class="hero__brand">
-            <img src="./logo.png" alt="KAA Logo" class="hero__logo" />
-            <p class="hero__eyebrow"><span class="hero__eyebrow-abbr">KAA</span>社團法人高雄市建築師公會</p>
-          </div>
-          <div class="hero__title-wrap">
-            <h1 class="hero__title">CODE INFO</h1>
-            <p class="hero__subtitle">
-              <a
-                href="https://www.kaa.org.tw/law_list.php"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                法規資訊
-              </a>
-            </p>
-          </div>
+  <header class="hero">
+    <div class="shell hero__inner">
+      <div class="hero__lede">
+        <div class="hero__brand">
+          <img src="./logo.png" alt="KAA Logo" class="hero__logo" />
+          <p class="hero__eyebrow"><span class="hero__eyebrow-abbr">KAA</span>社團法人高雄市建築師公會</p>
         </div>
-      </div>
-    </header>
-
-    <main class="shell flow">
-      <section class="controls" aria-label="篩選與排序">
-        <div class="field-group">
-          <label class="field-label" for="timeRange">顯示時間範圍</label>
-          <select id="timeRange">
-            <option value="3m">3 個月內</option>
-            <option value="1y">1 年內</option>
-            <option value="gt1y">1 年以上</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="regionFilter">來源區域</label>
-          <select id="regionFilter">
-            <option value="all">全部</option>
-            <option value="central">中央</option>
-            <option value="kaohsiung">高雄</option>
-            <option value="taipei">臺北</option>
-            <option value="newTaipei">新北</option>
-            <option value="other">其他縣市</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="sortSelect">排序方式</label>
-          <select id="sortSelect">
-            <option value="date-desc">最新發布在前</option>
-            <option value="date-asc">最早發布在前</option>
-            <option value="serial-desc">條文編號由大到小</option>
-            <option value="serial-asc">條文編號由小到大</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="simpleView">顯示模式</label>
-          <div class="button-row">
-            <button id="simpleView" type="button">簡化</button>
-            <button id="clearFilters" type="button">重設條件</button>
-          </div>
-        </div>
-      </section>
-
-      <section aria-live="polite">
-        <div id="status" class="status">資料載入中...</div>
-        <p class="status-note" aria-live="polite">資料每小時自動更新一次</p>
-        <div id="documentList" class="document-grid" hidden></div>
-        <div
-          id="scrollSentinel"
-          class="scroll-sentinel"
-          aria-hidden="true"
-          hidden
-        >
-          載入更多紀錄...
-        </div>
-      </section>
-    </main>
-
-    <footer class="app-footer">
-      <div class="shell footer-inner">
-        <p class="footer-copy">
-          資料來源：
-          <span class="footer-brand">
-            <img src="./logo.png" alt="KAA Logo" class="footer-logo" />
-            <a href="https://www.kaa.org.tw/" target="_blank" rel="noopener noreferrer">社團法人高雄市建築師公會</a>
-          </span>｜<br />
-          資訊委員會監製 ｜<br />
-          <a href="https://www.tlabarc.com/" target="_blank" rel="noopener noreferrer">Thinklab Architects 之物建築</a> 製作 ｜<br />
-          由 GitHub Pages 自動部署 ｜ 
-        </p>
-        <p id="updatedAt" class="footer-updated" aria-live="polite">資料更新：尚未更新</p>
-      </div>
-    </footer>
-
-    <div
-      id="previewModal"
-      class="modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modalTitle"
-      hidden
-    >
-      <div class="modal__overlay" data-close-modal></div>
-      <div class="modal__content">
-        <div class="modal__header">
-          <h3 id="modalTitle" class="modal__title">檔案預覽</h3>
-          <button
-            type="button"
-            class="modal__close"
-            aria-label="關閉預覽"
-            data-close-modal
-          >
-            &times;
-          </button>
-        </div>
-        <div class="modal__body">
-          <iframe id="modalFrame" title="PDF preview" frameborder="0"></iframe>
-          <p id="modalFallback" class="modal__fallback" hidden>
-            無法正常載入預覽，請直接下載檔案：
-            <a
-              id="modalFallbackLink"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              下載檔案
+        <div class="hero__title-wrap">
+          <h1 class="hero__title">CODE INFO</h1>
+          <p class="hero__subtitle">
+            <a href="https://www.kaa.org.tw/law_list.php" target="_blank" rel="noopener noreferrer">
+              法規資訊
             </a>
           </p>
         </div>
-        <div class="modal__actions">
-          <a
-            id="modalDownload"
-            class="modal__download"
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            下載檔案
-          </a>
-        </div>
       </div>
     </div>
+  </header>
 
-    <script type="module" src="./app.js?v=20251122zq"></script>
-  </body>
+  <main class="shell flow">
+    <section class="controls" aria-label="篩選與排序">
+      <div class="field-group">
+        <label class="field-label" for="timeRange">顯示時間範圍</label>
+        <select id="timeRange">
+          <option value="3m">3 個月內</option>
+          <option value="1y">1 年內</option>
+          <option value="gt1y">1 年以上</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="regionFilter">來源區域</label>
+        <select id="regionFilter">
+          <option value="all">全部</option>
+          <option value="central-kaohsiung">中央/高雄</option>
+          <option value="central">中央</option>
+          <option value="kaohsiung">高雄</option>
+          <option value="taipei">臺北</option>
+          <option value="newTaipei">新北</option>
+          <option value="other">其他縣市</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="sortSelect">排序方式</label>
+        <select id="sortSelect">
+          <option value="date-desc">最新發布在前</option>
+          <option value="date-asc">最早發布在前</option>
+          <option value="serial-desc">條文編號由大到小</option>
+          <option value="serial-asc">條文編號由小到大</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="simpleView">顯示模式</label>
+        <div class="button-row">
+          <button id="simpleView" type="button">簡化</button>
+          <button id="clearFilters" type="button">重設條件</button>
+        </div>
+      </div>
+    </section>
+
+    <section aria-live="polite">
+      <div id="status" class="status">資料載入中...</div>
+      <p class="status-note" aria-live="polite">資料每小時自動更新一次</p>
+      <div id="documentList" class="document-grid" hidden></div>
+      <div id="scrollSentinel" class="scroll-sentinel" aria-hidden="true" hidden>
+        載入更多紀錄...
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="shell footer-inner">
+      <p class="footer-copy">
+        資料來源：
+        <span class="footer-brand">
+          <img src="./logo.png" alt="KAA Logo" class="footer-logo" />
+          <a href="https://www.kaa.org.tw/" target="_blank" rel="noopener noreferrer">社團法人高雄市建築師公會</a>
+        </span>｜<br />
+        資訊委員會監製 ｜<br />
+        <a href="https://www.tlabarc.com/" target="_blank" rel="noopener noreferrer">Thinklab Architects 之物建築</a> 製作
+        ｜<br />
+        由 GitHub Pages 自動部署 ｜
+      </p>
+      <p id="updatedAt" class="footer-updated" aria-live="polite">資料更新：尚未更新</p>
+    </div>
+  </footer>
+
+  <div id="previewModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal__overlay" data-close-modal></div>
+    <div class="modal__content">
+      <div class="modal__header">
+        <h3 id="modalTitle" class="modal__title">檔案預覽</h3>
+        <button type="button" class="modal__close" aria-label="關閉預覽" data-close-modal>
+          &times;
+        </button>
+      </div>
+      <div class="modal__body">
+        <iframe id="modalFrame" title="PDF preview" frameborder="0"></iframe>
+        <p id="modalFallback" class="modal__fallback" hidden>
+          無法正常載入預覽，請直接下載檔案：
+          <a id="modalFallbackLink" href="#" target="_blank" rel="noopener noreferrer">
+            下載檔案
+          </a>
+        </p>
+      </div>
+      <div class="modal__actions">
+        <a id="modalDownload" class="modal__download" href="#" target="_blank" rel="noopener noreferrer">
+          下載檔案
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js?v=20251122zq"></script>
+</body>
+
 </html>
