@@ -33,7 +33,7 @@ const state = {
     search: '',
     sort: 'date-desc',
     statuses: new Set(DEFAULT_STATUS_VALUES),
-    region: 'all',
+    region: 'central-kaohsiung',
     timeRange: '3m',
     simple: false,
   },
