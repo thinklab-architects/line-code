@@ -818,12 +818,22 @@ function createDocumentCard(doc) {
     header.appendChild(badge);
   }
 
+
   if (priorityIssuerLabel) {
     const priorityFlag = document.createElement('span');
     priorityFlag.className = 'document-card__flag';
     priorityFlag.textContent = priorityIssuerLabel;
     header.appendChild(priorityFlag);
   }
+
+  // Add region flag for Kaohsiung
+  if (doc.region === 'kaohsiung' && doc.issuer) {
+    const regionFlag = document.createElement('span');
+    regionFlag.className = 'document-card__flag document-card__flag--kaohsiung';
+    regionFlag.textContent = doc.issuer;
+    header.appendChild(regionFlag);
+  }
+
 
   if (doc.date) {
     const issued = document.createElement('span');
