@@ -116,6 +116,14 @@ function detectRegion(issuer, subject) {
   const normalizedIssuer = issuer?.trim() ?? '';
   const normalizedSubject = subject?.trim() ?? '';
 
+  // Priority check: 高雄市政府 departments
+  if (
+    normalizedIssuer.includes('高雄市政府') ||
+    normalizedSubject.includes('高雄市政府')
+  ) {
+    return 'kaohsiung';
+  }
+
   if (
     normalizedSubject &&
     normalizedSubject.includes('法規研究委員會') &&
