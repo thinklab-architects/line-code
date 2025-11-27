@@ -942,6 +942,15 @@ function createSimpleDocumentCard(doc) {
     card.appendChild(priorityFlag);
   }
 
+  // Add region flag for Kaohsiung in simple mode
+  if (doc.region === 'kaohsiung' && doc.issuer) {
+    const regionFlag = document.createElement('span');
+    regionFlag.className = 'document-card__flag document-card__flag--kaohsiung';
+    regionFlag.textContent = doc.issuer;
+    card.appendChild(regionFlag);
+  }
+
+
   const issued = document.createElement('div');
   issued.className = 'simple-row';
   const issuedLabel = document.createElement('span');
