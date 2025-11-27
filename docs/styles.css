@@ -415,10 +415,10 @@ button:focus-visible {
 }
 
 .document-card--kaohsiung {
-  border-color: #f9a8d4;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(249, 168, 212, 0.08));
+  border-color: #fbbf24;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(251, 191, 36, 0.12));
   box-shadow:
-    0 30px 70px rgba(249, 168, 212, 0.25),
+    0 30px 70px rgba(251, 191, 36, 0.25),
     var(--glass-shadow);
 }
 
