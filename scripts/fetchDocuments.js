@@ -6,6 +6,7 @@ import { load } from 'cheerio';
 const BASE_URL = 'https://www.kaa.org.tw';
 const LIST_URL = `${BASE_URL}/law_list.php`;
 const DETAIL_DELAY_MS = 200;
+const MAX_RETRIES = 3;
 const DETAIL_CONCURRENCY = Math.max(
   1,
   Number.isFinite(Number(process.env.DETAIL_CONCURRENCY))
@@ -28,15 +29,24 @@ const __dirname = path.dirname(__filename);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function fetchPage(url) {
-  const response = await fetch(url, {
-    headers: DEFAULT_HEADERS,
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const response = await fetch(url, {
+        headers: DEFAULT_HEADERS,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} ${response.statusText}`);
+      }
+      return response.text();
+    } catch (error) {
+      if (attempt === MAX_RETRIES) {
+        throw new Error(`Failed to fetch ${url} after ${MAX_RETRIES} attempts: ${error.message}`);
+      }
+      const delay = 1000 * 2 ** (attempt - 1);
+      console.warn(`Attempt ${attempt}/${MAX_RETRIES} failed for ${url}: ${error.message}. Retrying in ${delay}ms...`);
+      await sleep(delay);
+    }
   }
-
-  return response.text();
 }
 
 function cleanText(value) {

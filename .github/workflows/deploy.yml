@@ -9,7 +9,7 @@ on:
     - cron: '0 * * * *'
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -37,8 +37,22 @@ jobs:
       - name: Fetch latest documents
         run: npm run fetch
         env:
-          FETCH_MAX_PAGES: 2
-          DETAIL_CONCURRENCY: 1
+          FETCH_MAX_PAGES: 20
+          DETAIL_CONCURRENCY: 2
+
+      - name: Commit updated data
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/documents.json
+          git commit -m "chore: auto update law records [skip ci]"
+          git push
+        continue-on-error: true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
