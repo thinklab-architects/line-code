@@ -6,6 +6,8 @@ on:
       - master
   workflow_dispatch:
   schedule:
+    # GitHub disables scheduled workflows after 60 days without repo activity.
+    # Run this workflow manually or push to `master` to re-enable the hourly cron if it stops again.
     - cron: '0 * * * *'
 
 permissions:
